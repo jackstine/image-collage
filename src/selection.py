@@ -93,18 +93,14 @@ def select_for_monitors(catalog, monitors, border=20):
     Returns a dict mapping monitor name to list of selected image dicts.
     Allows repeats only when the catalog is exhausted.
     """
-    remaining_catalog = list(catalog)
     results = {}
 
     for monitor in monitors:
         canvas_width = monitor["width"]
         canvas_height = monitor["height"]
 
-        if not remaining_catalog:
-            remaining_catalog = list(catalog)
-
         selected = []
-        working_catalog = list(remaining_catalog)
+        working_catalog = list(catalog)
 
         while True:
             pool = generate_pool(working_catalog)
@@ -131,11 +127,6 @@ def select_for_monitors(catalog, monitors, border=20):
 
             if not working_catalog:
                 break
-
-        # Remove used images from remaining catalog
-        for img in selected:
-            if img in remaining_catalog:
-                remaining_catalog.remove(img)
 
         results[monitor["name"]] = selected
 

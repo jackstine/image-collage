@@ -40,8 +40,9 @@ For each connected monitor, the system detects its resolution via `screeninfo`, 
 - **Pass 2**: Place images on canvas starting from `start_offset`, proceeding left to right
 
 ### Multi-Monitor
-- Each monitor receives a unique set of images — images used on one monitor are removed from the available set for subsequent monitors
-- Repeats are only allowed if the total number of images requested across all monitors exceeds the number of images in the `images/` directory
+- Each monitor receives its own independent copy of the full image catalog (the image collection)
+- Pool generation and image selection for each monitor operates on that monitor's own collection
+- Images may repeat across monitors since each monitor draws from the full set independently
 
 ### Scaled Width Calculation
 - For any image, the scaling ratio is: `min(canvas_width / original_width, canvas_height / original_height)`
@@ -67,7 +68,8 @@ For each connected monitor, the system detects its resolution via `screeninfo`, 
 - [ ] Layout uses actual thumbnail pixel sizes (two-pass composition) to prevent clipping
 - [ ] Trailing images are dropped if actual total exceeds canvas width
 - [ ] Images are centered on the canvas with equal background on both sides
-- [ ] Each monitor gets unique images; repeats only occur when images are exhausted
+- [ ] Each monitor receives its own independent copy of the full image catalog for selection
+- [ ] Images may repeat across monitors
 - [ ] Image dimensions are read from file headers only (no full pixel loading during selection)
 
 ## Related Specs
