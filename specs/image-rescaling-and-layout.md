@@ -10,9 +10,14 @@ The core functionality of ImageRescaler is to accept a list of input images and 
 
 ### Input
 - A list of image file paths (absolute paths)
-- An output file path for the resulting image
 - An output size as a `(width, height)` tuple defining the canvas dimensions
 - An optional background color as an `(R, G, B)` tuple (defaults to white `(255, 255, 255)`)
+
+### Output Directory Structure
+- Composed images are saved to `output/<width>x<height>_<monitor_name>/` (e.g., `output/3840x1080_HDMI-1/`)
+- The monitor name is read from `screeninfo` (`monitor.name`)
+- The output filename follows the pattern: `height_width_uuid.<ext>` (e.g., `1080_3840_a1b2c3d4.jpg`)
+- All previously generated wallpapers are kept (history is preserved)
 
 ### Image Rescaling
 - Each input image is resized using thumbnail mode with LANCZOS resampling
@@ -36,7 +41,9 @@ The core functionality of ImageRescaler is to accept a list of input images and 
 - [ ] Images are arranged left-to-right with a 20-pixel gap between them
 - [ ] The first image starts at the left edge of the canvas
 - [ ] The canvas background is filled with the specified color
-- [ ] The output image is saved to the specified output path
+- [ ] The output image is saved to `output/<width>x<height>_<monitor_name>/`
+- [ ] The output filename follows the `height_width_uuid.<ext>` naming convention
+- [ ] Previous wallpapers are preserved in the monitor directory
 - [ ] LANCZOS resampling is used for high-quality rescaling
 
 ## Related Specs
