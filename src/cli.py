@@ -16,7 +16,8 @@ def cmd_load(args):
 
 
 def cmd_generate(args):
-    """Generate a wallpaper for each detected monitor."""
+    """Generate wallpapers for each detected monitor."""
+    count = args.count
     images = catalog()
     if not images:
         print("No images found in images/ directory. Use 'load' to add images first.", file=sys.stderr)
@@ -27,23 +28,28 @@ def cmd_generate(args):
         print("No monitors detected.", file=sys.stderr)
         sys.exit(1)
 
-    print(f"Found {len(images)} images, {len(monitors)} monitor(s)")
+    print(f"Found {len(images)} images, {len(monitors)} monitor(s), generating {count} per monitor")
 
     bg_color = (0, 0, 0)
-    selections = select_for_monitors(images, monitors)
 
-    for monitor in monitors:
-        name = monitor["name"]
-        selected = selections.get(name, [])
-        if not selected:
-            print(f"  {name}: No images selected, skipping.")
-            continue
+    for cycle in range(1, count + 1):
+        if count > 1:
+            print(f"\n  Cycle {cycle}/{count}:")
 
-        output_dir = get_output_dir(monitor)
-        output_size = (monitor["width"], monitor["height"])
-        output_path = compose(selected, output_size, output_dir, bg_color)
-        print(f"  {name} ({monitor['width']}x{monitor['height']}): "
-              f"{len(selected)} images -> {output_path}")
+        selections = select_for_monitors(images, monitors)
+
+        for monitor in monitors:
+            name = monitor["name"]
+            selected = selections.get(name, [])
+            if not selected:
+                print(f"    {name}: No images selected, skipping.")
+                continue
+
+            output_dir = get_output_dir(monitor)
+            output_size = (monitor["width"], monitor["height"])
+            output_path = compose(selected, output_size, output_dir, bg_color)
+            print(f"    {name} ({monitor['width']}x{monitor['height']}): "
+                  f"{len(selected)} images -> {output_path}")
 
 
 def cmd_apply(args):
@@ -65,7 +71,8 @@ def main():
     load_parser = subparsers.add_parser("load", help="Ingest an image into the images/ directory")
     load_parser.add_argument("image_path", help="Path to the image file to load")
 
-    subparsers.add_parser("generate", help="Generate wallpapers for all detected monitors")
+    gen_parser = subparsers.add_parser("generate", help="Generate wallpapers for all detected monitors")
+    gen_parser.add_argument("count", nargs="?", type=int, default=1, help="Number of wallpapers to generate per monitor (default: 1)")
 
     subparsers.add_parser("apply", help="Apply most recent wallpapers to desktop")
 

@@ -1,3 +1,4 @@
 .screeninfo
 images
 output
+src/__pycache__

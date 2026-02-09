@@ -14,12 +14,15 @@ The Python script exposes three commands that form the core workflow: loading so
 - Reads and displays the image dimensions (width x height) from the file header
 - See [[image-load-operation|Image Load Operation]] for full details
 
-### `generate`
+### `generate [count]`
+- Accepts an optional `count` argument (default: `1`) specifying how many wallpapers to generate per monitor
+- For each count cycle, runs a **completely independent** selection and composition pass for every monitor
+- Example: `generate 5` with 2 monitors produces 10 wallpapers total (5 per monitor), each with a fresh pool and hero selection
 - Detects all connected monitors via `screeninfo`
-- Runs the [[wallpaper-generation-algorithm|Wallpaper Generation Algorithm]] for each monitor
+- Runs the [[wallpaper-generation-algorithm|Wallpaper Generation Algorithm]] for each monitor per cycle
 - Composes a wallpaper per monitor using [[image-rescaling-and-layout|Image Rescaling and Layout]]
 - Saves each wallpaper to `output/<width>x<height>_<monitor_name>/`
-- Displays a summary of what was generated (monitor name, resolution, output path)
+- Displays a summary of what was generated (monitor name, resolution, output path, cycle number)
 
 ### `apply`
 - Sets the most recently generated wallpaper for each monitor on the desktop
@@ -28,7 +31,8 @@ The Python script exposes three commands that form the core workflow: loading so
 
 ## Acceptance Criteria
 - [ ] `load` ingests an image and reports its dimensions
-- [ ] `generate` produces a wallpaper for each detected monitor
+- [ ] `generate` accepts an optional count argument (defaults to 1)
+- [ ] `generate` produces `count` wallpapers for each detected monitor, each from an independent selection cycle
 - [ ] `apply` sets the wallpapers on the desktop per monitor
 - [ ] Each command can be run independently
 - [ ] Each command provides user-facing output summarizing what it did

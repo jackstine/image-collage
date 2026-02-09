@@ -2,7 +2,6 @@ import os
 import uuid
 from PIL import Image
 
-from src.selection import scaled_width
 
 
 def compose(selected_images, output_size, output_dir, background_color=(255, 255, 255), border=20):
@@ -16,28 +15,36 @@ def compose(selected_images, output_size, output_dir, background_color=(255, 255
     """
     canvas_width, canvas_height = output_size
 
-    # --- Precompute layout ---
-    layout = []
+    # --- Pass 1: Thumbnail all images to get actual pixel sizes ---
+    thumbnails = []
     for img_info in selected_images:
-        sw = scaled_width(img_info["width"], img_info["height"], canvas_height)
-        layout.append({"info": img_info, "scaled_width": sw})
+        img = Image.open(img_info["path"])
+        img.thumbnail(output_size, Image.Resampling.LANCZOS)
+        thumbnails.append(img)
 
-    total_images_width = sum(item["scaled_width"] for item in layout)
-    total_borders = border * (len(layout) - 1) if len(layout) > 1 else 0
+    # --- Precompute layout from actual sizes ---
+    total_images_width = sum(img.size[0] for img in thumbnails)
+    total_borders = border * (len(thumbnails) - 1) if len(thumbnails) > 1 else 0
     total_width = total_images_width + total_borders
 
-    start_offset = max(0, (canvas_width - total_width) / 2)
+    # Drop trailing images that would overflow the canvas
+    while total_width > canvas_width and len(thumbnails) > 1:
+        removed = thumbnails.pop()
+        removed.close()
+        total_images_width -= removed.size[0]
+        total_borders = border * (len(thumbnails) - 1) if len(thumbnails) > 1 else 0
+        total_width = total_images_width + total_borders
 
-    # --- Create canvas and place images ---
+    start_offset = max(0, (canvas_width - total_width) // 2)
+
+    # --- Pass 2: Place images on canvas ---
     canvas = Image.new("RGB", output_size, background_color)
-    x_cursor = int(start_offset)
+    x_cursor = start_offset
 
-    for i, item in enumerate(layout):
-        img_path = item["info"]["path"]
-        with Image.open(img_path) as img:
-            img.thumbnail(output_size, Image.Resampling.LANCZOS)
-            canvas.paste(img, (x_cursor, 0))
-            x_cursor += img.size[0] + border
+    for img in thumbnails:
+        canvas.paste(img, (x_cursor, 0))
+        x_cursor += img.size[0] + border
+        img.close()
 
     # --- Save output ---
     os.makedirs(output_dir, exist_ok=True)

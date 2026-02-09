@@ -32,20 +32,28 @@ For each connected monitor, the system detects its resolution via `screeninfo`, 
 - Greedily add images (plus border spacing) until no more images fit in the remaining space
 - If the pool is exhausted and space remains, generate a **new pool** from remaining unused images and repeat from [[#Hero Selection]]
 
-### Centered Layout
-- All layout math is **precomputed before any image processing**
-- Calculate total width of all selected images plus borders between them
+### Centered Layout (Two-Pass Composition)
+- **Pass 1**: Thumbnail all selected images to get **actual pixel sizes** (avoids float-to-integer rounding drift)
+- Drop trailing images if actual total width exceeds canvas width
+- Calculate total width from actual thumbnail sizes plus borders
 - Compute `start_offset = (canvas_width - total_width) / 2`
-- Place images starting from `start_offset`, proceeding left to right
+- **Pass 2**: Place images on canvas starting from `start_offset`, proceeding left to right
 
 ### Multi-Monitor
 - Each monitor receives a unique set of images — images used on one monitor are removed from the available set for subsequent monitors
 - Repeats are only allowed if the total number of images requested across all monitors exceeds the number of images in the `images/` directory
 
 ### Scaled Width Calculation
-- For any image, the scaled width is: `original_width * (monitor_height / original_height)`
+- For any image, the scaling ratio is: `min(canvas_width / original_width, canvas_height / original_height)`
+- The scaled width is: `original_width * ratio`
+- This accounts for `thumbnail()` behavior which constrains to **both** canvas width and height, not just height
+- Images wider than the canvas are scaled down by width, not height
 - This value determines how much horizontal canvas space an image will occupy
 - Read from the file header only — no full image loading during selection
+
+### Image Fit Filtering
+- Before hero selection, images whose scaled width exceeds the canvas width are excluded from the pool
+- This prevents any single image from overflowing the canvas
 
 ## Acceptance Criteria
 - [ ] Monitor dimensions are detected via `screeninfo.get_monitors()`
@@ -55,7 +63,9 @@ For each connected monitor, the system detects its resolution via `screeninfo`, 
 - [ ] The second hero is filtered to only images that fit within the remaining canvas width
 - [ ] Remaining space is filled greedily with narrowest-first from the pool
 - [ ] A new pool is generated if the current pool is exhausted and space remains
-- [ ] All layout offsets are precomputed before image processing
+- [ ] Images that exceed canvas width are filtered out before selection
+- [ ] Layout uses actual thumbnail pixel sizes (two-pass composition) to prevent clipping
+- [ ] Trailing images are dropped if actual total exceeds canvas width
 - [ ] Images are centered on the canvas with equal background on both sides
 - [ ] Each monitor gets unique images; repeats only occur when images are exhausted
 - [ ] Image dimensions are read from file headers only (no full pixel loading during selection)

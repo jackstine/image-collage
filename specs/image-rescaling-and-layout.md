@@ -26,7 +26,7 @@ The core functionality of ImageRescaler is to accept a list of input images and 
 
 ### Horizontal Layout
 - Images are placed on the canvas from **left to right**
-- The first image is placed at horizontal offset `0`
+- Images are centered on the canvas — the first image starts at a computed offset so the group is horizontally centered
 - Each subsequent image is placed at a horizontal offset equal to the right edge of the previous image plus a **20-pixel border**
 - All images are vertically aligned to the **top** of the canvas (vertical offset `0`)
 
@@ -39,7 +39,7 @@ The core functionality of ImageRescaler is to accept a list of input images and 
 - [ ] Multiple images can be loaded from file paths and placed onto a single canvas
 - [ ] Each image maintains its original aspect ratio after rescaling
 - [ ] Images are arranged left-to-right with a 20-pixel gap between them
-- [ ] The first image starts at the left edge of the canvas
+- [ ] Images are horizontally centered on the canvas with equal background on both sides
 - [ ] The canvas background is filled with the specified color
 - [ ] The output image is saved to `output/<width>x<height>_<monitor_name>/`
 - [ ] The output filename follows the `height_width_uuid.<ext>` naming convention
