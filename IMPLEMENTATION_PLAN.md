@@ -10,6 +10,10 @@ Transform ImageRescaler from a single-file script into a CLI application with th
 - No CLI, no monitor detection, no per-monitor output structure
 - No `src/` directory structure
 
+## Platform Notes
+- **screeninfo on macOS**: `monitor.name` is `None` (AppKit/NSScreen doesn't expose connector names). Use `monitor<index>` as fallback for directory naming (e.g., `3840x1080_monitor0/`). `width_mm` and `height_mm` are also `None` on macOS. `is_primary` is available.
+- **PIL lazy loading**: `Image.open()` reads header only. `.size` is available without loading pixels. Call `.load()` or access pixel data to force full load. Use `Image.Resampling.LANCZOS` (not `Image.LANCZOS` which is deprecated).
+
 ---
 
 ## Implementation Items (Priority Order)
