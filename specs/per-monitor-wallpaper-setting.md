@@ -11,7 +11,7 @@ After wallpapers have been generated into per-monitor output directories, the ap
 ### Monitor Matching
 - Detects all connected monitors via `screeninfo.get_monitors()`
 - Matches each monitor to its output directory (`output/<width>x<height>_<monitor_name>/`)
-- Selects the most recently generated wallpaper from that directory
+- Selects a random wallpaper from that directory
 
 ### Wallpaper Application
 - Uses the macOS `osascript` command to set wallpapers
@@ -24,7 +24,7 @@ After wallpapers have been generated into per-monitor output directories, the ap
 
 ## Acceptance Criteria
 - [ ] Each connected monitor is matched to its output directory
-- [ ] The most recent wallpaper in each monitor's directory is selected
+- [ ] A random wallpaper from each monitor's directory is selected
 - [ ] Each monitor receives its own wallpaper via `osascript`
 - [ ] Monitors without generated wallpapers are skipped with a warning
 - [ ] Absolute file paths are used for the `osascript` command

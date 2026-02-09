@@ -25,7 +25,7 @@ The Python script exposes three commands that form the core workflow: loading so
 - Displays a summary of what was generated (monitor name, resolution, output path, cycle number)
 
 ### `apply`
-- Sets the most recently generated wallpaper for each monitor on the desktop
+- Sets a randomly selected wallpaper for each monitor on the desktop
 - Uses per-monitor wallpaper setting via `osascript`
 - See [[per-monitor-wallpaper-setting|Per-Monitor Wallpaper Setting]] for full details
 

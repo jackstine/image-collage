@@ -1,12 +1,13 @@
 import os
+import random
 import subprocess
 import sys
 
 from src.monitor import detect_monitors, get_output_dir
 
 
-def get_most_recent_wallpaper(output_dir):
-    """Return the most recently modified image file in the output directory."""
+def get_random_wallpaper(output_dir):
+    """Return a random image file from the output directory."""
     if not os.path.isdir(output_dir):
         return None
 
@@ -19,13 +20,18 @@ def get_most_recent_wallpaper(output_dir):
     if not files:
         return None
 
-    return max(files, key=os.path.getmtime)
+    return random.choice(files)
 
 
-def apply_wallpaper(image_path):
-    """Set a single image as the desktop wallpaper on macOS via osascript."""
+def apply_wallpaper(image_path, desktop_index):
+    """Set a single image as the wallpaper for a specific desktop on macOS via osascript.
+
+    desktop_index is 1-based (AppleScript desktop numbering).
+    """
     abs_path = os.path.abspath(image_path)
-    script = f'tell application "System Events" to set picture of every desktop to "{abs_path}"'
+    script = (
+        f'tell application "System Events" to set picture of desktop {desktop_index} to "{abs_path}"'
+    )
     subprocess.run(["osascript", "-e", script], check=True)
 
 
@@ -37,9 +43,9 @@ def apply_wallpapers():
     monitors = detect_monitors()
     results = []
 
-    for monitor in monitors:
+    for i, monitor in enumerate(monitors):
         output_dir = get_output_dir(monitor)
-        wallpaper = get_most_recent_wallpaper(output_dir)
+        wallpaper = get_random_wallpaper(output_dir)
 
         if wallpaper is None:
             print(f"Warning: No wallpapers found for {monitor['name']} "
@@ -49,7 +55,7 @@ def apply_wallpapers():
             continue
 
         try:
-            apply_wallpaper(wallpaper)
+            apply_wallpaper(wallpaper, desktop_index=i + 1)
             results.append({
                 "monitor": monitor["name"],
                 "status": "applied",
