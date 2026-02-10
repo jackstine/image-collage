@@ -42,7 +42,8 @@ def compose(selected_images, output_size, output_dir, background_color=(255, 255
     x_cursor = start_offset
 
     for img in thumbnails:
-        canvas.paste(img, (x_cursor, 0))
+        y_offset = max(0, (canvas_height - img.size[1]) // 2)
+        canvas.paste(img, (x_cursor, y_offset))
         x_cursor += img.size[0] + border
         img.close()
 
