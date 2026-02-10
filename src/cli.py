@@ -32,11 +32,16 @@ def cmd_generate(args):
 
     bg_color = (0, 0, 0)
 
+    remaining = None
     for cycle in range(1, count + 1):
         if count > 1:
             print(f"\n  Cycle {cycle}/{count}:")
 
-        selections = select_for_monitors(images, monitors)
+        if remaining is not None:
+            # Pass per-monitor remaining catalogs from prior cycle
+            selections, remaining = select_for_monitors(images, monitors, remaining_catalogs=remaining)
+        else:
+            selections, remaining = select_for_monitors(images, monitors)
 
         for monitor in monitors:
             name = monitor["name"]

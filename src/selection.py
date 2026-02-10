@@ -87,20 +87,29 @@ def select_images(pool, canvas_width, canvas_height, border=20):
     return selected
 
 
-def select_for_monitors(catalog, monitors, border=20):
-    """Select images for each monitor, removing used images between monitors.
+def select_for_monitors(catalog, monitors, border=20, remaining_catalogs=None):
+    """Select images for each monitor from per-monitor catalogs.
 
-    Returns a dict mapping monitor name to list of selected image dicts.
-    Allows repeats only when the catalog is exhausted.
+    Each monitor has its own independent image collection. Images selected in
+    one cycle are removed so subsequent cycles get different images. The catalog
+    resets to full only when a monitor's collection is exhausted.
+
+    Returns (results, remaining) where results maps monitor name to selected
+    image dicts, and remaining maps monitor name to the leftover catalog.
     """
     results = {}
+    remaining = remaining_catalogs if remaining_catalogs is not None else {m["name"]: list(catalog) for m in monitors}
 
     for monitor in monitors:
         canvas_width = monitor["width"]
         canvas_height = monitor["height"]
+        name = monitor["name"]
+
+        if not remaining[name]:
+            remaining[name] = list(catalog)
 
         selected = []
-        working_catalog = list(catalog)
+        working_catalog = remaining[name]
 
         while True:
             pool = generate_pool(working_catalog)
@@ -130,4 +139,4 @@ def select_for_monitors(catalog, monitors, border=20):
 
         results[monitor["name"]] = selected
 
-    return results
+    return results, remaining
