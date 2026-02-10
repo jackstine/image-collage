@@ -44,6 +44,12 @@ For each connected monitor, the system detects its resolution via `screeninfo`, 
 - Pool generation and image selection for each monitor operates on that monitor's own collection
 - Images may repeat across monitors since each monitor draws from the full set independently
 
+### Multi-Cycle Persistence
+- When `generate count` is greater than 1, each monitor's image collection persists across cycles
+- Images selected in cycle N are removed from that monitor's collection for cycle N+1
+- This ensures different images are used in each cycle for the same monitor
+- A monitor's collection resets to the full catalog only when it is exhausted
+
 ### Scaled Width Calculation
 - For any image, the scaling ratio is: `min(canvas_width / original_width, canvas_height / original_height)`
 - The scaled width is: `original_width * ratio`
@@ -70,6 +76,8 @@ For each connected monitor, the system detects its resolution via `screeninfo`, 
 - [ ] Images are centered on the canvas with equal background on both sides
 - [ ] Each monitor receives its own independent copy of the full image catalog for selection
 - [ ] Images may repeat across monitors
+- [ ] Across multiple cycles, each monitor's collection persists and selected images are removed
+- [ ] A monitor's collection resets only when exhausted
 - [ ] Image dimensions are read from file headers only (no full pixel loading during selection)
 
 ## Related Specs

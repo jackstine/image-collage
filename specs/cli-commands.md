@@ -17,7 +17,7 @@ The Python script exposes three commands that form the core workflow: loading so
 ### `generate [count]`
 - Accepts an optional `count` argument (default: `1`) specifying how many wallpapers to generate per monitor
 - For each count cycle, runs a **completely independent** selection and composition pass for every monitor
-- Example: `generate 5` with 2 monitors produces 10 wallpapers total (5 per monitor), each with a fresh pool and hero selection
+- Example: `generate 5` with 2 monitors produces 10 wallpapers total (5 per monitor), each with a fresh pool and hero selection but drawing from a persistent per-monitor image collection that shrinks across cycles
 - Detects all connected monitors via `screeninfo`
 - Runs the [[wallpaper-generation-algorithm|Wallpaper Generation Algorithm]] for each monitor per cycle
 - Composes a wallpaper per monitor using [[image-rescaling-and-layout|Image Rescaling and Layout]]

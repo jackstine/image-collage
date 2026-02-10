@@ -28,7 +28,7 @@ The core functionality of ImageRescaler is to accept a list of input images and 
 - Images are placed on the canvas from **left to right**
 - Images are centered on the canvas — the first image starts at a computed offset so the group is horizontally centered
 - Each subsequent image is placed at a horizontal offset equal to the right edge of the previous image plus a **20-pixel border**
-- All images are vertically aligned to the **top** of the canvas (vertical offset `0`)
+- Each image is **vertically centered** on the canvas independently: `y_offset = (canvas_height - image_height) / 2`
 
 ### Canvas
 - The canvas is a new RGB image of the specified `output_size`
@@ -45,6 +45,7 @@ The core functionality of ImageRescaler is to accept a list of input images and 
 - [ ] The output filename follows the `height_width_uuid.<ext>` naming convention
 - [ ] Previous wallpapers are preserved in the monitor directory
 - [ ] LANCZOS resampling is used for high-quality rescaling
+- [ ] Each image is independently vertically centered on the canvas
 
 ## Related Specs
 - [[output-overflow-handling|Output Overflow Handling]] - Describes behavior when images exceed canvas width
